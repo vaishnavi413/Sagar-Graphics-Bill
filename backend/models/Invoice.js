@@ -5,14 +5,11 @@ const InvoiceSchema = new mongoose.Schema({
     invoiceDate: String,
     dueDate: String,
     clientName: String,
-    clientGST: String,
     clientAddress: String,
     placeOfSupply: String,
-    gstRate: Number,
     items: [
         {
             particulars: String,
-            hsn: String,
             qty: Number,
             rate: Number,
             amount: Number,
@@ -27,5 +24,5 @@ const InvoiceSchema = new mongoose.Schema({
     businessName: String
 }, { timestamps: true });
 
-const Invoice = mongoose.model("Invoice", InvoiceSchema, "sadguruClothDB");
+const Invoice = mongoose.model("Invoice", InvoiceSchema, "sagar_graphics_invoices");
 export default Invoice;

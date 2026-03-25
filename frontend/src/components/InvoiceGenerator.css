@@ -2,7 +2,7 @@
 
 :root {
     --amz-blue: #232f3e;
-    --amz-orange: #ff9900;
+    --amz-red: #da251c; /* Sagar Graphics Red */
     --amz-text: #111;
     --amz-light-bg: #f3f3f3;
     --border-color: #d5d9d9;
@@ -38,7 +38,7 @@ body {
 .controls-card h3 {
     margin-top: 0;
     font-size: 18px;
-    border-bottom: 2px solid var(--amz-orange);
+    border-bottom: 2px solid var(--amz-red);
     display: inline-block;
     padding-bottom: 5px;
 }
@@ -60,8 +60,8 @@ body {
     font-size: 14px;
 }
 
-.amz-btn-primary { background: var(--amz-orange); color: black; }
-.amz-btn-secondary { background: #ffd814; color: black; border: 1px solid #fcd200; }
+.amz-btn-primary { background: var(--amz-red); color: white; }
+.amz-btn-secondary { background: #fdfdfd; color: black; border: 1px solid var(--amz-red); }
 .amz-btn-view { background: #e7e9ec; color: black; border: 1px solid #adb1b8; }
 .amz-btn-print { background: var(--amz-blue); color: white; }
 
@@ -127,7 +127,7 @@ body {
 
 .multi-address-flex {
     margin-top: 10px;
-    border-left: 3px solid var(--amz-orange);
+    border-left: 3px solid var(--amz-red);
     padding-left: 12px;
 }
 
@@ -342,13 +342,22 @@ body {
     font-size: 13px;
 }
 
-.qr-box {
-    width: 80px;
-    height: 80px;
-    background: #eee;
+.qr-container {
+    text-align: center;
+}
+
+.upi-qr-image {
+    width: 120px;
+    height: 120px;
     border: 1px solid #ddd;
+    padding: 5px;
+    background: white;
     margin-bottom: 5px;
-    background-image: repeating-linear-gradient(45deg, #eee, #eee 5px, #fff 5px, #fff 10px);
+}
+
+.qr-text {
+    font-size: 11px;
+    color: #444;
 }
 
 .qr-card { text-align: center; }

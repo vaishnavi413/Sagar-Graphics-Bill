@@ -83,7 +83,7 @@ const PreviousBills = () => {
       </div>
 
       <div className="amazon-invoice">
-        <h2 className="tax-invoice-tag">PREVIOUS BILLS</h2>
+        <h2 className="tax-invoice-tag">PREVIOUS ESTIMATES / BILLS</h2>
         {previousBills.length === 0 ? (
           <p>No bills found in History.</p>
         ) : (
@@ -100,7 +100,7 @@ const PreviousBills = () => {
             <tbody>
               {previousBills.map((bill) => (
                 <tr key={bill._id || bill.invoiceNo}>
-                  <td>INV-SCC-{bill.invoiceNo}</td>
+                  <td>INV-SG-{bill.invoiceNo}</td>
                   <td><b>{bill.clientName}</b></td>
                   <td>{bill.invoiceDate}</td>
                   <td style={{textAlign: 'right'}}>₹{bill.totals?.grandTotal?.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>

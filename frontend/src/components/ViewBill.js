@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import logo from "../assets/sadguru_logo_new.png";
+import logo from "../assets/sagar_graphics_logo.png";
+import upiQR from "../assets/upi_qr_code.png";
 import "../components/InvoiceGenerator.css";
 
 const ViewBill = () => {
@@ -14,10 +15,8 @@ const ViewBill = () => {
     ...rawBill,
     invoiceNo: rawBill.invoiceNo || rawBill.invoiceNumber || "--",
     clientName: rawBill.clientName || rawBill.customerName || rawBill.client_name || "N/A",
-    clientGST: rawBill.clientGST || rawBill.gstNumber || "N/A",
     clientAddress: rawBill.clientAddress || rawBill.address || "N/A",
     invoiceDate: rawBill.invoiceDate || (rawBill.createdAt ? new Date(rawBill.createdAt).toLocaleDateString() : "--"),
-    gstRate: rawBill.gstRate || 5,
     items: (rawBill.items || []).map(item => ({
       ...item,
       particulars: item.particulars || item.description || "--",
@@ -27,7 +26,7 @@ const ViewBill = () => {
     })),
     totals: (rawBill.totals && Object.keys(rawBill.totals).length > 0) ? rawBill.totals : {
       taxableAmount: rawBill.taxableAmount || rawBill.subtotal || 0,
-      taxAmount: (rawBill.cgst || 0) + (rawBill.sgst || 0) || rawBill.taxAmount || 0,
+      taxAmount: 0,
       roundOff: rawBill.roundOff || 0,
       grandTotal: normalizedGrandTotal,
     }
@@ -95,23 +94,20 @@ const ViewBill = () => {
       <div className="amazon-invoice printable">
         <header className="amz-header">
           <div className="header-left">
-            <h2 className="tax-invoice-tag">TAX INVOICE</h2>
+            <h2 className="tax-invoice-tag">ESTIMATE / BILL</h2>
             <div className="seller-details">
-              <h1>Sadguru Cloth Center</h1>
-              <p className="mfg-subtitle">Mfg. Of Hospital Garments, Plastic Aprons & Rexine</p>
-              <p><b>GSTIN: 27APKN1685B1ZU</b></p>
+              <h1>Sagar Graphics</h1>
+              <p className="mfg-subtitle">Graphic Design & Printing Services</p>
               <div className="contact-grid">
-                <p>Mob.: 9881454802 | Off.: 26351192</p>
-                <p>Mob.: 9021554700 | Res.: 26336215</p>
+                <p>Mob.: 9767216218 / 8805502960</p>
               </div>
               <div className="multi-address-flex">
-                <p><b>Branch:</b> 264, Nana Peth, Near Nana Peth Bhaji Mandai, Pune - 411002.</p>
-                <p><b>Head Office:</b> 617, Rasta Peth, Near Parsi Agyari, Pune - 411011.</p>
+                <p><b>Regd. Office:</b> Shop No 17, Siddivinayak Building, Narpatgiri Chowk, Somwar Peth, Pune 411011.</p>
               </div>
             </div>
           </div>
           <div className="header-right">
-            <img src={logo} alt="Sadguru Logo" className="amz-logo" />
+            <img src={logo} alt="Sagar Graphics Logo" className="amz-logo" />
             <p className="recipient-marking">Original for Recipient</p>
           </div>
         </header>
@@ -130,7 +126,6 @@ const ViewBill = () => {
           <div className="address-col">
             <p className="address-title">Customer Details:</p>
             <p>{bill.clientName}</p>
-            <p><b>GSTIN:</b> {bill.clientGST}</p>
           </div>
           <div className="address-col full-width">
             <p className="address-title">Billing Address:</p>
@@ -146,9 +141,7 @@ const ViewBill = () => {
                 <th>Item Description</th>
                 <th>Rate/Item</th>
                 <th>Qty</th>
-                <th>Taxable Value</th>
-                <th colSpan="2">Tax Amount</th>
-                <th>Amount</th>
+                <th colSpan="2">Amount</th>
               </tr>
             </thead>
             <tbody>
@@ -157,26 +150,18 @@ const ViewBill = () => {
                   <td>{index + 1}</td>
                   <td>
                     <p style={{fontWeight: 'bold', margin: '0 0 5px 0'}}>{item.particulars}</p>
-                    <p style={{fontSize: '11px', color: '#888'}}>HSN: {item.hsn || "--"}</p>
                   </td>
                   <td>₹{parseFloat(item.rate).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
                   <td>{item.qty}</td>
-                  <td>₹{item.amount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
-                  <td colSpan="2">₹{(item.amount * (bill.gstRate / 100)).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
-                  <td>₹{(item.amount * (1 + bill.gstRate / 100)).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                  <td colSpan="2">₹{item.amount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
                 </tr>
               ))}
             </tbody>
             <tfoot>
               <tr className="totals-summary-row">
                 <td colSpan="4"></td>
-                <td className="total-label">Taxable Amount</td>
+                <td className="total-label">Subtotal</td>
                 <td className="total-value" colSpan="3">₹{totals.taxableAmount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
-              </tr>
-              <tr className="totals-summary-row">
-                <td colSpan="4"></td>
-                <td className="total-label">{bill.gstRate}% GST</td>
-                <td className="total-value" colSpan="3">₹{totals.taxAmount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
               </tr>
               <tr className="grand-total-amz">
                 <td colSpan="4" className="amount-words-cell">
@@ -195,21 +180,22 @@ const ViewBill = () => {
             <div className="bank-info-qr">
               <div className="bank-card">
                 <p className="card-title">Bank Details:</p>
-                <p><b>Bank:</b> Punjab National Bank</p>
-                <p><b>A/C #:</b> 2901002100032112 (Current)</p>
-                <p><b>IFSC:</b> PUNB0290100</p>
-                <p><b>Branch:</b> Nana Peth</p>
+                <p><b>Bank:</b> HDFC BANK</p>
+                <p><b>A/C #:</b> 50200048433801</p>
+                <p><b>IFSC:</b> HDFC0005383</p>
+                <p><b>Branch:</b> Somwar Peth</p>
+                <p><b>A/C Name:</b> SAGAR GRAPHICS</p>
               </div>
               <div className="qr-card">
                 <p className="card-title">Pay using UPI:</p>
-                <div className="mock-qr">
-                  <div className="qr-box"></div>
-                  <p>Scan to Pay</p>
+                <div className="qr-container">
+                  <img src={upiQR} alt="UPI QR Code" className="upi-qr-image" />
+                  <p className="qr-text">Scan to Pay</p>
                 </div>
               </div>
             </div>
             <div className="signature-box">
-              <p>For Sadguru Cloth Center</p>
+              <p>For Sagar Graphics</p>
               <div className="sign-stamp"></div>
               <p className="auth-sign">Authorized Signatory</p>
             </div>
@@ -225,7 +211,7 @@ const ViewBill = () => {
             </ol>
           </div>
           
-          <p className="footer-disclaimer">This is a digitally signed document generated by SCC Billing System.</p>
+          <p className="footer-disclaimer">This is a digitally signed document generated by Sagar Graphics Billing System.</p>
         </section>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://sadguru-cloth-center-backend.onrender.com/api/invoices";
+const API_URL = "http://localhost:8080/api/invoices";
  // Local API URL for development
 
 export const fetchInvoices = async () => {
@@ -20,6 +20,7 @@ export const createInvoice = async (invoiceData) => {
     return response.data;
   } catch (error) {
     console.error("Error creating invoice:", error);
+    throw error; // Throwing error so frontend can catch it
   }
 };
 

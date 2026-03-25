@@ -27,7 +27,7 @@ app.use("/api/invoices", invoiceRoutes);
 
 // Root
 app.get("/", (req, res) => {
-  res.send("Sadguru Cloth Center Invoice API is running...");
+  res.send("Sagar Graphics Invoice API is running...");
 });
 
 // Start server

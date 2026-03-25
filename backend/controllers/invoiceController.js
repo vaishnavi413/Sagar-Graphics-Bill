@@ -31,7 +31,7 @@ export const getInvoices = async (req, res) => {
 export const getInvoiceByCustomer = async (req, res) => {
   try {
     const { name } = req.params;
-    const invoices = await Invoice.find({ customerName: new RegExp(name, "i") });
+    const invoices = await Invoice.find({ clientName: new RegExp(name, "i") });
     res.json(invoices);
   } catch (error) {
     res.status(500).json({ message: error.message });
