@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/invoices";
- // Local API URL for development
+const API_URL = "https://sagar-graphics-bill-backend.onrender.com/api/invoices";
 
 export const fetchInvoices = async () => {
   try {
