@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8080/api/invoices"; // Local API URL for development
+const API_URL = "https://sadguru-cloth-center-backend.onrender.com/api/invoices";
+ // Local API URL for development
 
 export const fetchInvoices = async () => {
   try {
