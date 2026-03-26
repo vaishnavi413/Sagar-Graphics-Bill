@@ -235,8 +235,8 @@ const InvoiceGenerator = () => {
               <tr>
                 <th style={{ width: '40px' }}>Sr.No</th>
                 <th>Item Description</th>
-                <th>Rate/Item</th>
                 <th>Qty</th>
+                <th>Rate/Item</th>
                 <th colSpan="2">Amount</th>
                 <th className="no-print">Action</th>
               </tr>
