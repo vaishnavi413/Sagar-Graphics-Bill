@@ -36,6 +36,13 @@ const ViewBill = () => {
     return <div className="amazon-billing-container"><p>No bill data found.</p><button className="amz-btn-primary" onClick={() => navigate("/")}>Go Home</button></div>;
   }
 
+  const handlePrint = () => {
+    const originalTitle = document.title;
+    document.title = `invoice no ${bill.invoiceNo}`;
+    window.print();
+    document.title = originalTitle;
+  };
+
   const numberToWords = (num) => {
     if (num === 0) return "Zero Rupees";
     const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
@@ -88,7 +95,7 @@ const ViewBill = () => {
     <div className="amazon-billing-container">
       <div className="actions-bar no-print">
         <button className="amz-btn-primary" onClick={() => navigate("/")}>← Back to Home</button>
-        <button className="amz-btn-print" onClick={() => window.print()}>Print This Bill</button>
+        <button className="amz-btn-print" onClick={handlePrint}>Print This Bill</button>
       </div>
 
       <div className="amazon-invoice printable">
@@ -161,7 +168,7 @@ const ViewBill = () => {
               <tr className="totals-summary-row">
                 <td colSpan="4"></td>
                 <td className="total-label">Subtotal</td>
-                <td className="total-value" colSpan="3">₹{totals.taxableAmount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                <td className="total-value">₹{totals.taxableAmount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
               </tr>
               <tr className="grand-total-amz">
                 <td colSpan="4" className="amount-words-cell">
@@ -169,7 +176,7 @@ const ViewBill = () => {
                   <p>{numberToWords(totals.grandTotal)}</p>
                 </td>
                 <td className="total-label">Total</td>
-                <td className="total-value" colSpan="3">₹{totals.grandTotal.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                <td className="total-value">₹{totals.grandTotal.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
               </tr>
             </tfoot>
           </table>

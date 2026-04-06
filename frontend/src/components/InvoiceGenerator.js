@@ -1,14 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import "../components/InvoiceGenerator.css";
 import logo from "../assets/sagar_graphics_logo.png";
 import upiQR from "../assets/upi_qr_code.png";
-import { createInvoice, fetchInvoices } from "../api/invoiceApi";
+import { createInvoice, fetchInvoices, updateInvoice } from "../api/invoiceApi";
 
 const InvoiceGenerator = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const billToEdit = location.state?.billToEdit;
 
   useEffect(() => {
+    if (billToEdit) {
+      setInvoiceNo(billToEdit.invoiceNo);
+      
+      let dateVal = billToEdit.invoiceDate;
+      if (dateVal && dateVal.includes('/')) {
+        const parts = dateVal.split('/');
+        if (parts.length === 3) {
+           dateVal = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+        }
+      } else if (dateVal && dateVal.includes('-')) {
+         const parts = dateVal.split('-');
+         if (parts[2].length === 4) { // DD-MM-YYYY
+            dateVal = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+         }
+      }
+      setInvoiceDate(dateVal);
+      setClientName(billToEdit.clientName !== "Unnamed client" && billToEdit.clientName !== "N/A" ? billToEdit.clientName : "");
+      setClientAddress(billToEdit.clientAddress || "");
+      setPlaceOfSupply(billToEdit.placeOfSupply || "27-MAHARASHTRA");
+      setItems(billToEdit.items && billToEdit.items.length > 0 ? billToEdit.items : [{ id: 1, particulars: "", hsn: "", qty: "", rate: "", amount: 0 }]);
+      return;
+    }
+
     const fetchNextNo = async () => {
       try {
         const invoices = await fetchInvoices();
@@ -23,7 +48,7 @@ const InvoiceGenerator = () => {
       }
     };
     fetchNextNo();
-  }, []);
+  }, [billToEdit]);
 
   const [invoiceNo, setInvoiceNo] = useState(1);
   const [invoiceDate, setInvoiceDate] = useState("");
@@ -82,23 +107,44 @@ const InvoiceGenerator = () => {
 
     // Save to Local Storage (Backup)
     const savedBills = JSON.parse(localStorage.getItem("bills")) || [];
-    savedBills.push(billData);
+    if (billToEdit) {
+      const index = savedBills.findIndex(b => b.invoiceNo === billData.invoiceNo);
+      if (index !== -1) savedBills[index] = billData;
+      else savedBills.push(billData);
+    } else {
+      savedBills.push(billData);
+    }
     localStorage.setItem("bills", JSON.stringify(savedBills));
 
     // Save to MongoDB via API
     try {
-      await createInvoice(billData);
-      alert("Bill saved successfully to MongoDB!");
+      if (billToEdit && billToEdit._id) {
+        await updateInvoice(billToEdit._id, billData);
+        alert("Bill updated successfully in MongoDB!");
+      } else {
+        await createInvoice(billData);
+        alert("Bill saved successfully to MongoDB!");
+      }
     } catch (err) {
       console.error("API Save failed", err);
       alert("Bill saved locally, but failed to sync for now.");
     }
 
-    setInvoiceNo(invoiceNo + 1);
+    if (!billToEdit) {
+      setInvoiceNo(invoiceNo + 1);
+    }
     setItems([{ id: 1, particulars: "", hsn: "", qty: "", rate: "", amount: 0 }]);
     setClientName("");
     setClientAddress("");
     setInvoiceDate("");
+    navigate("/previous-bills");
+  };
+
+  const handlePrint = () => {
+    const originalTitle = document.title;
+    document.title = `invoice no ${invoiceNo}`;
+    window.print();
+    document.title = originalTitle;
   };
 
   const numberToWords = (num) => {
@@ -155,9 +201,9 @@ const InvoiceGenerator = () => {
         <h3>Invoice Controls</h3>
         <div className="toolbar">
           <button className="amz-btn-primary" onClick={addItem}>+ Add Item</button>
-          <button className="amz-btn-secondary" onClick={saveBill}>Save & Sync</button>
+          <button className="amz-btn-secondary" onClick={saveBill}>{billToEdit ? "Update Bill" : "Save & Sync"}</button>
           <button className="amz-btn-view" onClick={() => navigate("/previous-bills")}>View History</button>
-          <button className="amz-btn-print" onClick={() => window.print()}>Print Invoice</button>
+          <button className="amz-btn-print" onClick={handlePrint}>Print Invoice</button>
         </div>
       </div>
 
@@ -267,7 +313,7 @@ const InvoiceGenerator = () => {
               <tr className="totals-summary-row">
                 <td colSpan="4"></td>
                 <td className="total-label">Subtotal</td>
-                <td className="total-value" colSpan="3">₹{totals.taxableAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                <td className="total-value" colSpan="2">₹{totals.taxableAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
               </tr>
               <tr className="grand-total-amz">
                 <td colSpan="4" className="amount-words-cell">
@@ -275,7 +321,7 @@ const InvoiceGenerator = () => {
                   <p>{numberToWords(totals.grandTotal)}</p>
                 </td>
                 <td className="total-label">Total</td>
-                <td className="total-value" colSpan="3">₹{totals.grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                <td className="total-value" colSpan="2">₹{totals.grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
               </tr>
             </tfoot>
           </table>

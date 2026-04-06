@@ -5,11 +5,13 @@ import {
   getInvoiceByCustomer,
   downloadInvoicePDF,
   deleteInvoice,
+  updateInvoice,
 } from "../controllers/invoiceController.js";
 
 const router = express.Router();
 
 router.post("/", createInvoice);
+router.put("/:id", updateInvoice);
 router.get("/", getInvoices);
 router.get("/search/:name", getInvoiceByCustomer);
 router.get("/download/:id", downloadInvoicePDF);

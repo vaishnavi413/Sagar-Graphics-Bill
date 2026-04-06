@@ -50,6 +50,10 @@ const PreviousBills = () => {
     navigate(`/view-bill/${bill.invoiceNo}`, { state: { bill } });
   };
 
+  const editBill = (bill) => {
+    navigate("/", { state: { billToEdit: bill } });
+  };
+
   const handleDelete = async (bill) => {
     if (!window.confirm(`Are you sure you want to delete Invoice #${bill.invoiceNo}?`)) return;
 
@@ -90,7 +94,7 @@ const PreviousBills = () => {
           <table className="amz-table">
             <thead>
               <tr>
-                <th>Invoice #</th>
+                <th>INVOICE</th>
                 <th>Client Name</th>
                 <th>Date</th>
                 <th style={{textAlign: 'right'}}>Total Amount</th>
@@ -100,12 +104,13 @@ const PreviousBills = () => {
             <tbody>
               {previousBills.map((bill) => (
                 <tr key={bill._id || bill.invoiceNo}>
-                  <td>INV-SG-{bill.invoiceNo}</td>
+                  <td>INV {bill.invoiceNo}</td>
                   <td><b>{bill.clientName}</b></td>
                   <td>{bill.invoiceDate}</td>
                   <td style={{textAlign: 'right'}}>₹{bill.totals?.grandTotal?.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
                   <td style={{textAlign: 'center', display: 'flex', gap: '10px', justifyContent: 'center'}}>
                     <button className="amz-btn-view" style={{padding: '5px 15px'}} onClick={() => viewBill(bill)}>View</button>
+                    <button className="amz-btn-secondary" style={{padding: '5px 15px'}} onClick={() => editBill(bill)}>Edit</button>
                     <button className="del-btn" title="Delete Permanent" onClick={() => handleDelete(bill)}>×</button>
                   </td>
                 </tr>
