@@ -7,6 +7,8 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import invoiceRoutes from "./routes/invoiceRoutes.js";
+import "./utils/backup.js"; // Initialize backup system and cron jobs
+
 
 dotenv.config();
 

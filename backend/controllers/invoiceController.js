@@ -1,17 +1,27 @@
 import Invoice from "../models/Invoice.js";
+import { appendToExcel, sendBackupEmail } from "../utils/backup.js";
+
+
 
 // Generate new invoice number
 const getNextInvoiceNumber = async () => {
-  const lastInvoice = await Invoice.findOne().sort({ invoiceNumber: -1 });
-  return lastInvoice ? lastInvoice.invoiceNumber + 1 : 1;
+  const lastInvoice = await Invoice.findOne().sort({ invoiceNo: -1 });
+  return lastInvoice ? (lastInvoice.invoiceNo || 0) + 1 : 1;
 };
+
 
 // Create Invoice
 export const createInvoice = async (req, res) => {
   try {
     const invoice = new Invoice(req.body);
     await invoice.save();
+    // Backup to Excel
+    await appendToExcel(invoice);
+    // Send email immediately
+    await sendBackupEmail();
     res.status(201).json(invoice);
+
+
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -25,7 +35,13 @@ export const updateInvoice = async (req, res) => {
     if (!updatedInvoice) {
       return res.status(404).json({ message: "Invoice not found" });
     }
+    // Update backup in Excel
+    await appendToExcel(updatedInvoice);
+    // Send email immediately
+    await sendBackupEmail();
     res.json(updatedInvoice);
+
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
