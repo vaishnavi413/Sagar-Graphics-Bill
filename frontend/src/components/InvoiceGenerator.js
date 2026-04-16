@@ -142,7 +142,7 @@ const InvoiceGenerator = () => {
 
   const handlePrint = () => {
     const originalTitle = document.title;
-    document.title = `invoice no ${invoiceNo}`;
+    document.title = `INV ${invoiceNo} ${clientName}`;
     window.print();
     document.title = originalTitle;
   };
@@ -300,8 +300,8 @@ const InvoiceGenerator = () => {
                       placeholder="Item Name"
                     />
                   </td>
-                  <td><input type="number" value={item.rate} onChange={(e) => handleItemChange(index, "rate", e.target.value)} /></td>
                   <td><input type="number" value={item.qty} onChange={(e) => handleItemChange(index, "qty", e.target.value)} /></td>
+                  <td><input type="number" value={item.rate} onChange={(e) => handleItemChange(index, "rate", e.target.value)} /></td>
                   <td colSpan="2">₹{item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                   <td className="no-print">
                     <button className="del-btn" onClick={() => deleteItem(item.id)}>×</button>

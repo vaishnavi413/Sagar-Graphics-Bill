@@ -38,7 +38,7 @@ const ViewBill = () => {
 
   const handlePrint = () => {
     const originalTitle = document.title;
-    document.title = `invoice no ${bill.invoiceNo}`;
+    document.title = `INV ${bill.invoiceNo} ${bill.clientName}`;
     window.print();
     document.title = originalTitle;
   };
@@ -146,8 +146,8 @@ const ViewBill = () => {
               <tr>
                 <th style={{width: '40px'}}>#</th>
                 <th>Item Description</th>
-                <th>Rate/Item</th>
                 <th>Qty</th>
+                <th>Rate/Item</th>
                 <th colSpan="2">Amount</th>
               </tr>
             </thead>
@@ -158,8 +158,8 @@ const ViewBill = () => {
                   <td>
                     <p style={{fontWeight: 'bold', margin: '0 0 5px 0'}}>{item.particulars}</p>
                   </td>
-                  <td>₹{parseFloat(item.rate).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
                   <td>{item.qty}</td>
+                  <td>₹{parseFloat(item.rate).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
                   <td colSpan="2">₹{item.amount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
                 </tr>
               ))}
